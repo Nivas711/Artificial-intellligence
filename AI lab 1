@@ -1,0 +1,58 @@
+from queue import PriorityQueue
+
+goal = (1,2,3,4,5,6,7,8,0)
+
+# Manhattan heuristic
+def h(state):
+    d = 0
+    for i in range(9):
+        if state[i] != 0:
+            g = state[i] - 1
+            d += abs(i//3 - g//3) + abs(i%3 - g%3)
+    return d
+
+# Find next moves
+def moves(state):
+    res = []
+    i = state.index(0)
+    r, c = i//3, i%3
+
+    for dr,dc in [(1,0),(-1,0),(0,1),(0,-1)]:
+        nr,nc = r+dr,c+dc
+        if 0<=nr<3 and 0<=nc<3:
+            s = list(state)
+            s[i], s[nr*3+nc] = s[nr*3+nc], s[i]
+            res.append(tuple(s))
+    return res
+
+# A* Algorithm
+def solve(start):
+    pq = PriorityQueue()
+    pq.put((h(start), 0, start, []))
+    visited = set()
+
+    while not pq.empty():
+        f, g, state, path = pq.get()
+
+        if state == goal:
+            return path + [state]
+
+        visited.add(state)
+
+        for n in moves(state):
+            if n not in visited:
+                pq.put((g+1+h(n), g+1, n, path+[state]))
+
+# Display
+def show(path):
+    for s in path:
+        print(s[0:3])
+        print(s[3:6])
+        print(s[6:9])
+        print("----")
+
+start = (1,2,3,4,0,6,7,5,8)
+
+p = solve(start)
+show(p)
+print("Solved in", len(p)-1, "moves")
