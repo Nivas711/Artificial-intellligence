@@ -1,0 +1,30 @@
+from collections import deque
+
+A, B = 4, 3
+goal = 2
+
+def solve():
+    q = deque([(0,0)])
+    visited = set()
+
+    while q:
+        a, b = q.popleft()
+
+        if a == goal or b == goal:
+            print("Goal Reached:", (a,b))
+            return
+
+        if (a,b) in visited:
+            continue
+        visited.add((a,b))
+
+        q.extend([
+            (A, b),
+            (a, B),
+            (0, b),
+            (a, 0),
+            (a - min(a, B-b), b + min(a, B-b)),
+            (a + min(b, A-a), b - min(b, A-a))
+        ])
+
+solve()
